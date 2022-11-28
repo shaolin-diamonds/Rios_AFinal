@@ -5,7 +5,7 @@ app.use(express.json());
 
 const mongoose = require('mongoose');
 
-const PORT = 1200;
+const PORT = 1100;
 
 const dbURL = "mongodb+srv://dbadmin:admin@mongo.zjgsurz.mongodb.net/test";
 
@@ -39,7 +39,7 @@ app.get('/', (req,res) => {
 app.get('/getAllCourses', async (req,res) => {
     try {
         let programs = await Course.find({}).lean();
-        return res.status(200).json(programs);
+        return res.status(200).json({"programs":programs});
     }
     catch {
         return res.status(500).json("{message: Failed to access course data}");
@@ -49,7 +49,7 @@ app.get('/getAllCourses', async (req,res) => {
 app.get('/getAllStudents', async (req,res) => {
     try {
         let learners = await Student.find({}).lean();
-        return res.status(200).json(learners);
+        return res.status(200).json({"learners":learners});
     }
     catch {
         return res.status(500).json("{message: Failed to access student data}");
@@ -78,7 +78,7 @@ app.get('/findCourse', async (req,res) => {
 
 app.post('/addCourse', async (req,res) => {
     try {
-        let program = {
+        let programs = {
             courseInstructor: req.body.courseInstructor,
             courseCredits: req.body.courseCredits,
             courseID: req.body.courseID,
@@ -86,7 +86,7 @@ app.post('/addCourse', async (req,res) => {
             dateEntered: new Date()
         }
 
-        await Course(program).save().then(c => {
+        await Course(programs).save().then(c => {
             return res.status(201).json("Course Added!");
         })
     }
@@ -97,14 +97,14 @@ app.post('/addCourse', async (req,res) => {
 
 app.post('/addStudent', async (req,res) => {
     try {
-        let learner = {
+        let learners = {
             fname: req.body.fname,
             lname: req.body.lname,
             studentID: req.body.studentID,
             dateEntered: new Date()
         }
 
-        await Student(learner).save().then(c => {
+        await Student(learners).save().then(c => {
             return res.status(201).json("Student Added!");
         })
     }
@@ -115,11 +115,11 @@ app.post('/addStudent', async (req,res) => {
 
 app.post('/editStudentById', async (req,res) =>{
     try {
-        leaner = await Student.updateOne({_id: req.body.studentId}
+        leaners = await Student.updateOne({_id: req.body.studentId}
         , {
             studentID: req.body.studentID
         }, {upsert: true});
-        if (leaner)
+        if (leaners)
         {
             res.status(200).json("{message: Student ID Edited}");
         }
@@ -134,11 +134,11 @@ app.post('/editStudentById', async (req,res) =>{
 
 app.post('/editStudentByFname', async (req,res) =>{
     try {
-        leaner = await Student.updateOne({_id: req.body.fname}
+        leaners = await Student.updateOne({_id: req.body.fname}
         , {
             fname: req.body.fname
         }, {upsert: true});
-        if (leaner)
+        if (leaners)
         {
             res.status(200).json("{message: Student First Name Edited}");
         }
@@ -153,11 +153,11 @@ app.post('/editStudentByFname', async (req,res) =>{
 
 app.post('/editCourseByCourseName', async (req,res) =>{
     try {
-        program = await Course.updateOne({_id: req.body.courseName}
+        programs = await Course.updateOne({_id: req.body.courseName}
         , {
             courseName: req.body.courseName
         }, {upsert: true});
-        if (program)
+        if (programs)
         {
             res.status(200).json("{message: Course Name Edited}");
         }
@@ -172,9 +172,9 @@ app.post('/editCourseByCourseName', async (req,res) =>{
 
 app.post('/deleteCourseById', async (req,res) => {
 	try {
-		let program = await Course.findOne({_id: req.body.id});
+		let programs = await Course.findOne({_id: req.body.id});
 
-		if(program) {
+		if(programs) {
 			await Course.deleteOne({_id: req.body.id});
             return res.status(200).json("{message: Course deleted}");
 		}
@@ -189,9 +189,9 @@ app.post('/deleteCourseById', async (req,res) => {
 
 app.post('/removeStudentFromClasses', async (req,res) => {
 	try {
-		let leaner = await Student.findOne({_id: req.body.id});
+		let leaners = await Student.findOne({_id: req.body.id});
 
-		if(leaner) {
+		if(leaners) {
 			await Student.deleteOne({_id: req.body.id});
             return res.status(200).json("{message: Student removed}");
 		}
