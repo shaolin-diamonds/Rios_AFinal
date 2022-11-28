@@ -5,7 +5,7 @@ app.use(express.json());
 
 const mongoose = require('mongoose');
 
-const PORT = 1100;
+const PORT = 1200;
 
 const dbURL = "mongodb+srv://dbadmin:admin@mongo.zjgsurz.mongodb.net/test";
 
